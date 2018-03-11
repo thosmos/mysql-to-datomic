@@ -13,7 +13,32 @@ https://github.com/thosmos/mysql-to-datomic
 
 ### Library
 
-`[thosmos/mysql-to-datomic "0.3.0"]`
+`[thosmos/mysql-to-datomic "see.be.low"]`
+
+[![Clojars Project](https://img.shields.io/clojars/v/thosmos/mysql-to-datomic.svg)](https://clojars.org/thosmos/mysql-to-datomic)
+
+
+This depends on the environment variables:
+ ```
+ MYSQL_DATABASE
+ MYSQL_USERNAME
+ MYSQL_PASSWORD
+ MYSQL_HOST (default 127.0.0.1)
+ MYSQL_PORT (default 3306)
+ DATOMIC_URI (default "datomic:mem://mysql-datomic-test1")
+ ```
+
+Assuming the env variables are defined, you can simply call `(mysql-to-datomic.core/-main)`
+
+Alternatively, the function `mysql-to-datomic.core/run-conversion` will do a the full process, 
+and it requires a state atom and for the database connections to be already setup and open:
+
+```clojure
+(defonce state (atom {}))
+(mysql-to-datomic.core/start-dbs state)
+(mysql-to-datomic.core/run-conversion state)
+```
+
 
 ### App
 
@@ -30,9 +55,9 @@ MYSQL_USERNAME
 MYSQL_PASSWORD
 MYSQL_HOST (default 127.0.0.1)
 MYSQL_PORT (default 3306)
-DATOMIC_URI (default "datomic:free://mysql-datomic-test1")
+DATOMIC_URI (default "datomic:mem://mysql-datomic-test1")
 ```
-LIKE:
+POSSIBLY LIKE:
 ```bash
 MYSQL_DATABASE=riverdb MYSQL_USERNAME=riverdb java -jar mysql-to-datomic.jar
 ```
@@ -51,7 +76,7 @@ tweak the JVM memory settings though.
 `datomic.objectCacheMax` should match your transactor's equivalent setting.
 
 ```bash
-java -server -Xmx700m -Xms300m -Ddatomic.objectCacheMax=128m -jar mysql-to-datomic.jar
+java -server -Xmx370m -Xms128m -Ddatomic.objectCacheMax=128m -jar mysql-to-datomic.jar
 ```
 
 ## TODO
