@@ -1,4 +1,4 @@
-(defproject thosmos/mysql-to-datomic "0.3.3"
+(defproject thosmos/mysql-to-datomic "0.3.4-SNAPSHOT"
   :description "MySQL-to-Datomic"
   :url "https://github.com/thosmos/mysql-to-datomic"
   :license {:name "Eclipse Public License"
