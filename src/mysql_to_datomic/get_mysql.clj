@@ -1,5 +1,6 @@
 (ns mysql-to-datomic.get-mysql
   (:require
+    [clojure.tools.logging :as log :refer [debug info warn error]]
     [clojure.string :as s :refer [join]]
     [clojure.java.jdbc :as j]
     [clojure.pprint :refer [pprint]]
@@ -78,13 +79,19 @@
 (defn tablator [mysql-db]
   (j/with-db-metadata [meta mysql-db]
     (let [tables (get-tables meta)
+          tables (remove #(clojure.string/ends-with? % "_entry") tables)
           tables (into (sorted-map)
                    (for [table tables]
                      [(keyword table) {:columns (get-columns-map meta table)
                                        :foreign-keys (get-foreign-keys-map meta table)
-                                       :primary-keys (get-primary-keys meta table)
-                                       }]))
-          tables (add-rev-map-keys tables)
-          ;_ (println "FKS!" (keys (:tables @state)))
-          ]
+                                       :primary-keys (get-primary-keys meta table)}]))
+
+          tables (add-rev-map-keys tables)]
+          ;_ (debug "FKS!" (keys (:tables @state)))
+
       tables)))
+
+
+; create intermediate data model specs
+;(defn specalator [tables]
+;)

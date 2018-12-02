@@ -1,11 +1,13 @@
 (ns mysql-to-datomic.migrations
-  (:require [io.rkn.conformity :as c]
-            [datomic.api :as d]))
+  (:require
+    [clojure.tools.logging :as log :refer [debug info warn error]]
+    [io.rkn.conformity :as c]
+    [datomic.api :as d]))
 
 ;(def norms-map (c/read-resource "something.edn"))
-;(println (str "Has attribute? " (c/has-attribute? (d/db cx) :something/title)))
+;(debug (str "Has attribute? " (c/has-attribute? (d/db cx) :something/title)))
 ;(c/ensure-conforms cx norms-map [:my-project/something-schema])
-;(println (str "Has attribute? " (c/has-attribute? (d/db cx) :something/title)))
+;(debug (str "Has attribute? " (c/has-attribute? (d/db cx) :something/title)))
 
 (defn schema-norms-map [key schemas]
   {key

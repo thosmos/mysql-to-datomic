@@ -13,7 +13,7 @@ https://github.com/thosmos/mysql-to-datomic
 
 ### Library
 
-`[thosmos/mysql-to-datomic "see.be.low"]`
+`[thosmos/mysql-to-datomic "0.3.0"]`
 
 [![Clojars Project](https://img.shields.io/clojars/v/thosmos/mysql-to-datomic.svg)](https://clojars.org/thosmos/mysql-to-datomic)
 
@@ -30,7 +30,7 @@ This depends on the environment variables:
 
 Assuming the env variables are defined, you can simply call `(mysql-to-datomic.core/-main)`
 
-Alternatively, the function `mysql-to-datomic.core/run-conversion` will do a the full process, 
+Alternatively, the function `mysql-to-datomic.core/run-conversion` will do the full process,
 and it requires a state atom and for the database connections to be already setup and open:
 
 ```clojure
