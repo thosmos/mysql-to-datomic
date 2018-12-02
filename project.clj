@@ -1,4 +1,4 @@
-(defproject thosmos/mysql-to-datomic "0.3.0"
+(defproject thosmos/mysql-to-datomic "0.3.1-SNAPSHOT"
   :description "MySQL-to-Datomic"
   :url "https://github.com/thosmos/mysql-to-datomic"
   :license {:name "Eclipse Public License"
@@ -33,10 +33,10 @@
                                    :password :env/datomic_password}}
 
   :plugins [;[lein-ancient "0.6.14"]
-            [lein-tools-deps "0.4.1"]
+            [lein-tools-deps "0.4.1"]]
             ;[lein-environ "1.1.0"]
             ;[gorillalabs/lein-docker "1.5.0"]
-            ]
+
 
   :middleware [lein-tools-deps.plugin/resolve-dependencies-with-deps-edn]
   :lein-tools-deps/config {:config-files [:install :user :project]}
@@ -51,7 +51,7 @@
            :dockerfile "Dockerfile"
            :build-dir  "."}
 
-  :profiles { :uberjar {:aot [mysql-to-datomic.core]} }
+  :profiles { :uberjar {:aot [mysql-to-datomic.core]}}
   :main ^{:skip-aot true} mysql-to-datomic.core
 
   ;; -Xms128m -Xmx370m -Ddatomic.objectCacheMax=128m -server
@@ -68,5 +68,5 @@
                   ["docker" "push"]
                   ["change" "version" "leiningen.release/bump-version"]
                   ["vcs" "commit"]
-                  ["vcs" "push"]]
-  )
+                  ["vcs" "push"]])
+
