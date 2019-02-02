@@ -13,7 +13,7 @@ https://github.com/thosmos/mysql-to-datomic
 
 ### Library
 
-`[thosmos/mysql-to-datomic "0.3.0"]`
+`[thosmos/mysql-to-datomic "0.3.4"]`
 
 [![Clojars Project](https://img.shields.io/clojars/v/thosmos/mysql-to-datomic.svg)](https://clojars.org/thosmos/mysql-to-datomic)
 
@@ -40,7 +40,7 @@ and it requires a state atom and for the database connections to be already setu
 ```
 
 
-### App
+### App (broken for now ...)
 
 To run as an app, first build a binary like:
 

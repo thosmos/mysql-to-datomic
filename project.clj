@@ -1,5 +1,5 @@
-(defproject thosmos/mysql-to-datomic "0.3.4-SNAPSHOT"
-  :description "MySQL-to-Datomic"
+(defproject thosmos/mysql-to-datomic "0.3.4"
+  :description "A minimal library for moving schema and data from MySQL to Datomic"
   :url "https://github.com/thosmos/mysql-to-datomic"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
@@ -9,7 +9,7 @@
                                    :password :env/datomic_password}}
 
 
-  :plugins [[lein-tools-deps "0.4.1"]]
+  :plugins [[lein-tools-deps "0.4.3"]]
 
   :middleware [lein-tools-deps.plugin/resolve-dependencies-with-deps-edn]
   :lein-tools-deps/config {:config-files [:install :user :project]}
@@ -36,7 +36,7 @@
                   ["vcs" "tag"]
                   ;["clean"]
                   ;["uberjar"]
-                  ["deploy"]
+                  ["deploy" "clojars"]
                   ;["docker" "build"]
                   ;["docker" "push"]
                   ["change" "version" "leiningen.release/bump-version"]
