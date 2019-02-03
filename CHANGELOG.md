@@ -23,10 +23,10 @@
 - initial commit 
 - worked for getting a bunch of simple schemas and data into Datomic
 
-[Unreleased]: https://github.com/thosmos/domain-spec/compare/0.3.4..HEAD
-[0.3.4]: https://github.com/thosmos/domain-spec/compare/0.3.3...0.3.4
-[0.3.3]: https://github.com/thosmos/domain-spec/compare/0.3.1...0.3.3
-[0.3.1]: https://github.com/thosmos/domain-spec/compare/0.3.0...0.3.1
+[Unreleased]: https://github.com/thosmos/mysql-to-datomic/compare/0.3.4..HEAD
+[0.3.4]: https://github.com/thosmos/mysql-to-datomic/compare/0.3.3...0.3.4
+[0.3.3]: https://github.com/thosmos/mysql-to-datomic/compare/0.3.1...0.3.3
+[0.3.1]: https://github.com/thosmos/mysql-to-datomic/compare/0.3.0...0.3.1
 
 #### Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
