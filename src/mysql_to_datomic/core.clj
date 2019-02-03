@@ -208,6 +208,7 @@
 
 
 
+  ;; 2018
 
 
   (swap! state
@@ -235,10 +236,15 @@
   ;; test running the data import.
   ;; FIXME very important is the order of table keys for references to work (sample references sitevisit so [:sitevisit :sample])
   ;; FIXME one fix is to use string tempids, but then ALL data will run in one TX.  At least this way we have one per table
+
+  (require 'dotenv)
+  (def uri2 (dotenv/env :DATOMIC_URI))
+  (def cx2 (d/connect uri2))
+
   (def test-db-2 (reduce
                    (fn [result next]
                      (:db-after (d/with result next)))
-                   (d/db cxr) (migrate-tables-txes mydb2 (d/db cxr) tables [:sitevisit :sample])))
+                   (d/db cx2) (migrate-tables-txes mydb2 (d/db cx2) tables [:sitevisit :sample])))
 
   (get-pk-maxes (d/db cx2) tables [:sitevisit :sample :fieldresult :labresult :fieldobsresult])
 
@@ -275,8 +281,56 @@
     (count (:tx-data @(d/transact cxr tx))))
 
 
+  ;; server-side:
+
+  (require 'dotenv)
+  (def uri2 (dotenv/env :DATOMIC_URI))
+  (def cx2 (d/connect uri2))
+
+  (get-pk-maxes (d/db cx2) tables [:sitevisit :sample :fieldresult :labresult :fieldobsresult])
+
+  {:sitevisit/SiteVisitID 84650,
+   :sample/SampleRowID 184944,
+   :fieldresult/FieldResultRowID 1438179,
+   :labresult/LabResultRowID 108537,
+   :fieldobsresult/FieldObsResultRowID 162685}
+
+  ;; check it
+
+  (ffirst (migrate-tables-txes mydb2 (d/db cx2) tables
+            [:sitevisit :sample :fieldresult :labresult :fieldobsresult]
+            {:sitevisit/SiteVisitID              84650,
+             :sample/SampleRowID                 184944,
+             :fieldresult/FieldResultRowID       1438179,
+             :labresult/LabResultRowID           108537,
+             :fieldobsresult/FieldObsResultRowID 162685}))
+
+  #:sitevisit{:MetalCollected false, :WidthMeasured false, :CheckPerson 5265, :VisitType [:sitevisittype/id 1], :HydroMod "NR", :CreationTimestamp #inst "2018-05-15T22:11:22.000000000-00:00", :PointID 0, :SiteVisitDate #inst "2018-03-12T07:00:00.000-00:00", :SiteVisitID 84651, :QACheck false, :Datum "NR", :StationID [:stationlookup/StationsRowID 2080], :BacteriaCollected false, :DataEntryPerson 5269, :WaterDepth 30.00000M, :AgencyCode [:agencylookup/AgencyCode "SYRCL"], :Lon 0.00000M, :QAPerson 5297, :TssCollected false, :HydroModLoc "NR", :ProjectID [:projectslookup/ProjectID "07SY0000"], :Notes "Huck: Missing Time of 1st Sample\r\rD.O. on YSI would not stabalize", :DepthMeasured false, :TurbidityCollected false, :StreamWidth 0.00000M, :GPSDeviceCode 1, :Time "15:50", :StationFailCode [:stationfaillookup/StationFailCode 0], :DataEntryDate #inst "2018-05-15T07:00:00.000-00:00", :Lat 0.00000M}
+
+  (first (second (migrate-tables-txes mydb2 (d/db cx2) tables)
+                 [:sitevisit :sample :fieldresult :labresult :fieldobsresult]
+                 {:sitevisit/SiteVisitID              84650,
+                  :sample/SampleRowID                 184944,
+                  :fieldresult/FieldResultRowID       1438179,
+                  :labresult/LabResultRowID           108537,
+                  :fieldobsresult/FieldObsResultRowID 162685}))
 
 
+  #:sample{:SiteVisitID [:sitevisit/SiteVisitID 84651], :SampleTypeCode [:sampletypelookup/SampleTypeCode "FieldMeasure"], :EventType [:eventtypelookup/EventType "WaterChem"], :QCCheck false, :DepthSampleCollection 0.00000M, :SampleComplete false, :SampleRowID 184945, :SampleReplicate 0}
+
+
+  ;; for real?
+
+  (for [tx (migrate-tables-txes mydb2 (d/db cx2) tables
+             [:sitevisit :sample :fieldresult :labresult :fieldobsresult]
+             {:sitevisit/SiteVisitID              84650,
+              :sample/SampleRowID                 184944,
+              :fieldresult/FieldResultRowID       1438179,
+              :labresult/LabResultRowID           108537,
+              :fieldobsresult/FieldObsResultRowID 162685})]
+    (count (:tx-data @(d/transact cx2 tx))))
+
+  => (9202 4705 46422 1 7921)  ;; seems like it worked!
 
   ;;; older migration
 
