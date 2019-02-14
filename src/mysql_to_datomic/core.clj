@@ -332,6 +332,27 @@
 
   => (9202 4705 46422 1 7921)  ;; seems like it worked!
 
+
+  ;; retract 2018 data
+
+  (defn retract-entities-txs [eids]
+    (vec (for [e eids]
+           [:db.fn/retractEntity e])))
+
+  (count (d/q '[:find [(pull ?e [*]) ...]
+                :where
+                [(> ?dt (java.util.Date. (java.util.Date/parse "2018/01/01")))]
+                [?e :sitevisit/SiteVisitDate ?dt]] (d/db cxr)))
+
+  (d/transact cxr
+    (retract-entities-txs
+      (d/q '[:find [?e ...]
+             :where
+             [(> ?dt (java.util.Date. (java.util.Date/parse "2018/01/01")))]
+             [?e :sitevisit/SiteVisitDate ?dt]] (d/db cxr))))
+
+
+
   ;;; older migration
 
   (swap! state assoc :tables tables)
