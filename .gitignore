@@ -13,3 +13,4 @@ pom.xml.asc
 logs
 private/
 .cpcache
+.env
