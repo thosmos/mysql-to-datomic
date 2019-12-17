@@ -237,7 +237,7 @@
   ;; FIXME very important is the order of table keys for references to work (sample references sitevisit so [:sitevisit :sample])
   ;; FIXME one fix is to use string tempids, but then ALL data will run in one TX.  At least this way we have one per table
 
-  (require 'dotenv)
+  (require 'dotenv :reload)
   (def uri2 (dotenv/env :DATOMIC_URI))
   (def cx2 (d/connect uri2))
 
@@ -246,7 +246,15 @@
                      (:db-after (d/with result next)))
                    (d/db cx2) (migrate-tables-txes mydb2 (d/db cx2) tables [:sitevisit :sample])))
 
-  (get-pk-maxes (d/db cx2) tables [:sitevisit :sample :fieldresult :labresult :fieldobsresult])
+  (ffirst (migrate-tables-txes mydb2 (d/db cx2) tables
+            [:sitevisit :sample :fieldresult :labresult :fieldobsresult]
+            {:sitevisit/SiteVisitID 84968,
+             :sample/SampleRowID 185531,
+             :fieldresult/FieldResultRowID 1442940,
+             :labresult/LabResultRowID 108537,
+             :fieldobsresult/FieldObsResultRowID 164283}))
+
+  (get-pk-maxes (d/db cx2) tables [:samplingdevice :sitevisit :sample :fieldresult :labresult :fieldobsresult])
 
   ;; Feb 1, 2018
   {:sitevisit/SiteVisitID 84894,
@@ -256,10 +264,10 @@
    :fieldobsresult/FieldObsResultRowID 162685}
 
   ;; after retract all 2018 data (had errors in sample and result IDs)
-  {:sitevisit/SiteVisitID 84650,
-   :sample/SampleRowID 184944,
-   :fieldresult/FieldResultRowID 1438179,
-   :labresult/LabResultRowID 108537,
+  {:sitevisit/SiteVisitID              84650,
+   :sample/SampleRowID                 184944,
+   :fieldresult/FieldResultRowID       1438179,
+   :labresult/LabResultRowID           108537,
    :fieldobsresult/FieldObsResultRowID 162685}
 
   ;; after data migration
@@ -271,15 +279,26 @@
 
   ;; now do it for real
 
-  (for [tx (migrate-tables-txes mydb2 (d/db cxr) tables
+  (for [tx (migrate-tables-txes mydb2 (d/db cx2) tables
              [:sitevisit :sample :fieldresult :labresult :fieldobsresult]
-             {:sitevisit/SiteVisitID 84650,
-              :sample/SampleRowID 184944,
-              :fieldresult/FieldResultRowID 1438179,
-              :labresult/LabResultRowID 108537,
+             {:sitevisit/SiteVisitID              84650,
+              :sample/SampleRowID                 184944,
+              :fieldresult/FieldResultRowID       1438179,
+              :labresult/LabResultRowID           108537,
               :fieldobsresult/FieldObsResultRowID 162685})]
-    (count (:tx-data @(d/transact cxr tx))))
+    (count (:tx-data @(d/transact cx2 tx))))
 
+  ;; 20191217:
+  (for [tx (migrate-tables-txes mydb2 (d/db cx2) tables
+             [:sitevisit :sample :fieldresult :labresult :fieldobsresult]
+             {:sitevisit/SiteVisitID 84968,
+              :sample/SampleRowID 185531,
+              :fieldresult/FieldResultRowID 1442940,
+              :labresult/LabResultRowID 108537,
+              :fieldobsresult/FieldObsResultRowID 164283})]
+    (count (:tx-data @(d/transact cx2 tx))))
+
+  ;;
 
   ;; server-side:
 
@@ -307,13 +326,13 @@
 
   #:sitevisit{:MetalCollected false, :WidthMeasured false, :CheckPerson 5265, :VisitType [:sitevisittype/id 1], :HydroMod "NR", :CreationTimestamp #inst "2018-05-15T22:11:22.000000000-00:00", :PointID 0, :SiteVisitDate #inst "2018-03-12T07:00:00.000-00:00", :SiteVisitID 84651, :QACheck false, :Datum "NR", :StationID [:stationlookup/StationsRowID 2080], :BacteriaCollected false, :DataEntryPerson 5269, :WaterDepth 30.00000M, :AgencyCode [:agencylookup/AgencyCode "SYRCL"], :Lon 0.00000M, :QAPerson 5297, :TssCollected false, :HydroModLoc "NR", :ProjectID [:projectslookup/ProjectID "07SY0000"], :Notes "Huck: Missing Time of 1st Sample\r\rD.O. on YSI would not stabalize", :DepthMeasured false, :TurbidityCollected false, :StreamWidth 0.00000M, :GPSDeviceCode 1, :Time "15:50", :StationFailCode [:stationfaillookup/StationFailCode 0], :DataEntryDate #inst "2018-05-15T07:00:00.000-00:00", :Lat 0.00000M}
 
-  (first (second (migrate-tables-txes mydb2 (d/db cx2) tables)
-                 [:sitevisit :sample :fieldresult :labresult :fieldobsresult]
-                 {:sitevisit/SiteVisitID              84650,
-                  :sample/SampleRowID                 184944,
-                  :fieldresult/FieldResultRowID       1438179,
-                  :labresult/LabResultRowID           108537,
-                  :fieldobsresult/FieldObsResultRowID 162685}))
+  (first (second (migrate-tables-txes mydb2 (d/db cx2) tables
+                   [:sitevisit :sample :fieldresult :labresult :fieldobsresult]
+                   {:sitevisit/SiteVisitID              84650,
+                    :sample/SampleRowID                 184944,
+                    :fieldresult/FieldResultRowID       1438179,
+                    :labresult/LabResultRowID           108537,
+                    :fieldobsresult/FieldObsResultRowID 162685})))
 
 
   #:sample{:SiteVisitID [:sitevisit/SiteVisitID 84651], :SampleTypeCode [:sampletypelookup/SampleTypeCode "FieldMeasure"], :EventType [:eventtypelookup/EventType "WaterChem"], :QCCheck false, :DepthSampleCollection 0.00000M, :SampleComplete false, :SampleRowID 184945, :SampleReplicate 0}
@@ -385,16 +404,17 @@
               (d/db cxr)))
 
 
-  (def crew-txs (vec (map
-                       #(-> %
-                          (assoc :samplingcrew/compound-key
-                                 (str "SiteVisitID"
-                                   (get-in % [:samplingcrew/SiteVisitID :sitevisit/SiteVisitID])
-                                   "PersonID"
-                                   (get-in % [:samplingcrew/PersonID :person/PersonID])))
-                          (dissoc :samplingcrew/SiteVisitID)
-                          (dissoc :samplingcrew/PersonID))
-                       crew)))
+  (def crew-txs
+    (vec (map
+           #(-> %
+              (assoc :samplingcrew/compound-key
+                (str "SiteVisitID"
+                  (get-in % [:samplingcrew/SiteVisitID :sitevisit/SiteVisitID])
+                  "PersonID"
+                  (get-in % [:samplingcrew/PersonID :person/PersonID])))
+              (dissoc :samplingcrew/SiteVisitID)
+              (dissoc :samplingcrew/PersonID))
+           crew)))
 
   (d/transact cxr (schema-tx [[:samplingcrew/compound-key
                                :one
@@ -405,9 +425,8 @@
   (d/transact cxr crew-txs)
 
   (d/transact
-    cxr
-    [[:db/add :sitevisit/SiteVisitID :db/unique :db.unique/identity]
-     [:db/add :db.part/db :db.alter/attribute :sitevisit/SiteVisitID]])
+    cxr [[:db/add :sitevisit/SiteVisitID :db/unique :db.unique/identity]
+         [:db/add :db.part/db :db.alter/attribute :sitevisit/SiteVisitID]])
 
 
   ;;; now do it for real
@@ -422,8 +441,8 @@
   (def tx' nil)
   (def db-after nil)
 
-  (def tx (transform/run-main-fields cxr state mydb2 specs))
-  (def tx' (transform/run-fks cxr state))
+  (def tx (transform/run-main-fields cxr state mydb2 specs tables))
+  (def tx' (transform/run-fks cxr state tables))
   (def db-after (:db-after tx'))
 
 
@@ -448,15 +467,15 @@
          [(:fktable_name rm) (:pkcolumn_name rm)])]))
 
   (count (d/q '[:find [?e ...]
-                :where [?e :sample/SampleRowID]])
-    (d/db (:datomic @state)))
+                :where [?e :sample/SampleRowID]]
+           (d/db (:datomic @state))))
   (count (d/q '[:find [?e ...]
                 :where [?e :sample/SampleRowID]]
            (d/db (:datomic @state))))
   (d/pull
     (d/db (:datomic @state))
     '[* {:sitevisit/ProjectID [:projectslookup/AgencyCode]}
-      {:sitevisit/StationID [*]}] [:sitevisit/SiteVisitID 81924]))
+        {:sitevisit/StationID [*]}] [:sitevisit/SiteVisitID 81924]))
 
 ;(filter #(= :db.type/keyword (:db/valueType %)) schemas)
 ;(filter #(= :samplingcrew/PersonID (:db/ident %)) schemas)
