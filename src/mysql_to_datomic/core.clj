@@ -43,22 +43,25 @@
   (let [_      (debug "generating mysql table infos")
         tables (get-mysql/tablator my-ds)
 
-        _      (debug "generating model specs")
+        _      (debug "generating table specs")
         specs  (gen-spec/tables->specs tables)
 
+        _      (debug "transferring main fields")
         _      (transform/run-main-fields cx state my-ds specs tables)
+
+        _      (debug "transferring fk fields")
         tx     (transform/run-fks cx state tables)]
 
-    (debug "done")
+    (debug "Done!")
     tx))
 
 (defn -main []
-  (debug "HEY!")
-  #_(let [_ (d/create-database (uri))
-          cx    (d/connect (uri))
-          my-ds (create-mysql-datasource nil)
-          tx    (run-conversion state cx my-ds)]
-      (swap! state assoc :db-after (:db-after tx))))
+  (debug "Running ...")
+  (let [_ (d/create-database (uri))
+        cx    (d/connect (uri))
+        my-ds (create-mysql-datasource nil)
+        tx    (run-conversion state cx my-ds)]
+    (swap! state assoc :db-after (:db-after tx))))
 
 
 

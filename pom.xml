@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>thosmos</groupId>
   <artifactId>mysql-to-datomic</artifactId>
-  <version>0.3.5</version>
+  <version>0.3.6</version>
   <name>mysql-to-datomic</name>
   <description>A minimal library for moving schema and data from MySQL to Datomic</description>
   <url>https://github.com/thosmos/mysql-to-datomic</url>
