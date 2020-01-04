@@ -13,14 +13,7 @@
     (j/metadata-result
       (.getTables meta nil nil nil (into-array String ["TABLE"])))))
 
-;(defn get-views [meta]
-;  (map :table_name
-;    (j/metadata-result
-;      (.getTables meta nil nil nil (into-array String ["VIEW"])))))
-
 (defn get-columns [meta table]
-  #_(j/metadata-result
-      (.getColumns meta nil nil table nil))
   (map #(select-keys % [:column_name
                         :type_name
                         :data_type
@@ -67,14 +60,9 @@
                              (select [MAP-VALS :foreign-keys MAP-VALS #(= (:pktable_name %) (name k))] tables)))]
         [k v]))))
 
-;(defn get-indexes [meta table]
-;  (j/metadata-result
-;    (.getIndexInfo meta nil nil table false false)))
-
-;(defn gen-views [mysql-db]
-;  (j/with-db-metadata [meta mysql-db]
-;    (j/metadata-result
-;      (.getTables meta nil nil nil (into-array String ["VIEW"])))))
+(defn get-indexes [meta table]
+  (j/metadata-result
+    (.getIndexInfo meta nil nil table false false)))
 
 (defn tablator [mysql-db]
   (j/with-db-metadata [meta mysql-db]
@@ -87,11 +75,5 @@
                                        :primary-keys (get-primary-keys meta table)}]))
 
           tables (add-rev-map-keys tables)]
-          ;_ (debug "FKS!" (keys (:tables @state)))
 
       tables)))
-
-
-; create intermediate data model specs
-;(defn specalator [tables]
-;)

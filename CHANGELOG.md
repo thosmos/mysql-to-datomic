@@ -3,7 +3,13 @@
 ## [Unreleased]
 ### Planned
 - more robust FK tracking to enable better interlinked multi-table updates 
-- fix standalone app usage ...
+
+## [0.3.5] - 2020-01-03
+### Fixed
+- standalone app usage ...
+### Changed
+- improved README and comment code in core.clj
+- removed project.clj; uses only deps.edn
 
 ## [0.3.4] - 2019-02-02
 ### Added
@@ -23,7 +29,8 @@
 - initial commit 
 - worked for getting a bunch of simple schemas and data into Datomic
 
-[Unreleased]: https://github.com/thosmos/mysql-to-datomic/compare/0.3.4..HEAD
+[Unreleased]: https://github.com/thosmos/mysql-to-datomic/compare/0.3.5..HEAD
+[0.3.5]: https://github.com/thosmos/mysql-to-datomic/compare/0.3.4...0.3.5
 [0.3.4]: https://github.com/thosmos/mysql-to-datomic/compare/0.3.3...0.3.4
 [0.3.3]: https://github.com/thosmos/mysql-to-datomic/compare/0.3.1...0.3.3
 [0.3.1]: https://github.com/thosmos/mysql-to-datomic/compare/0.3.0...0.3.1
