@@ -7,6 +7,7 @@
     [mysql-to-datomic.gen-schema :as gen-schema]
     [mysql-to-datomic.transform :as transform]
     [mysql-to-datomic.gen-spec :as gen-spec]
+    [mysql-to-datomic.migrations :as mig]
     [datomic.api :as d]
     [clojure.java.io :as io]
     [datascript.core :as ds]
@@ -68,9 +69,10 @@
 
 (comment
 
-  (def uri "datomic:sql://newdb?jdbc:mysql://localhost:3306/datomic?user=datomic&password=datomic&useSSL=false")
-  (def cx (d/connect uri))
-  (defn db [] (d/db cx))
+  (def uri "datomic:free://localhost:4334/riverdb")
+  (defn cx []
+    (d/connect uri))
+  (defn db [] (d/db (cx)))
 
   (def mydb {:datasource (make-datasource (datasource-options {:mysql-username "myuser"
                                                                :mysql-password "mypass"

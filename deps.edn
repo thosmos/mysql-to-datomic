@@ -6,8 +6,9 @@
            org.clojure/tools.logging      {:mvn/version "0.4.1"},
            ch.qos.logback/logback-classic {:mvn/version "1.2.3"},
            org.clojure/tools.cli          {:mvn/version "0.3.7"},
-           com.datomic/datomic-pro        {:mvn/version "0.9.5786" :exclusions [org.slf4j/slf4j-nop org.slf4j/jul-to-slf4j
-                                                                                org.slf4j/log4j-over-slf4j org.slf4j/jcl-over-slf4j]},
+           com.datomic/datomic-free         {:mvn/version "0.9.5697" :exclusions [org.slf4j/slf4j-nop]}
+           ;com.datomic/datomic-pro        {:mvn/version "0.9.5786" :exclusions [org.slf4j/slf4j-nop org.slf4j/jul-to-slf4j
+           ;                                                                     org.slf4j/log4j-over-slf4j org.slf4j/jcl-over-slf4j]},
            thosmos/util                   {:mvn/version "0.1.8"},
            lynxeyes/dotenv                {:mvn/version "1.0.2"},
            mysql/mysql-connector-java     {:mvn/version "5.1.44"},
